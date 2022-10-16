@@ -2,6 +2,7 @@ package catalog.renamrgb.github.com.catalog.controllers;
 
 import catalog.renamrgb.github.com.catalog.dto.UserDTO;
 import catalog.renamrgb.github.com.catalog.dto.UserInsertDTO;
+import catalog.renamrgb.github.com.catalog.dto.UserUpdateDTO;
 import catalog.renamrgb.github.com.catalog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,9 +51,9 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
     public ResponseEntity<UserDTO> update(@PathVariable("id") Long id,
-                                          @Valid @RequestBody UserDTO dto) {
-        dto = service.update(id, dto);
-        return ResponseEntity.ok(dto);
+                                          @Valid @RequestBody UserUpdateDTO dto) {
+        UserDTO newDto = service.update(id, dto);
+        return ResponseEntity.ok(newDto);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
