@@ -4,6 +4,8 @@ import catalog.renamrgb.github.com.catalog.services.exceptions.DatabaseException
 import catalog.renamrgb.github.com.catalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -27,6 +29,23 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<StandarError> validation(MethodArgumentNotValidException e,
+                                                   HttpServletRequest request) {
+        ValidationError err = new ValidationError();
+        err.setTimestamp(Instant.now());
+        err.setStatus(HttpStatus.UNPROCESSABLE_ENTITY.value());
+        err.setError(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase());
+        err.setMessage("Validation error");
+        err.setPath(request.getRequestURI());
+
+        for (FieldError f : e.getBindingResult().getFieldErrors()) {
+            err.addError(f.getField(), f.getDefaultMessage());
+        }
+        
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+    }
+
     private StandarError StandarErrorFactory(Exception e, HttpServletRequest request, HttpStatus status) {
         StandarError err = new StandarError();
         err.setTimestamp(Instant.now());
@@ -34,7 +53,6 @@ public class ControllerExceptionHandler {
         err.setError(status.getReasonPhrase());
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
-
         return err;
     }
 
