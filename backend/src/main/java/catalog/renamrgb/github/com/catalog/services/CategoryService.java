@@ -3,11 +3,12 @@ package catalog.renamrgb.github.com.catalog.services;
 import catalog.renamrgb.github.com.catalog.dto.CategoryDTO;
 import catalog.renamrgb.github.com.catalog.entities.Category;
 import catalog.renamrgb.github.com.catalog.repositories.CategoryRepository;
-import catalog.renamrgb.github.com.catalog.services.exceptions.EntityNotFoundException;
+import catalog.renamrgb.github.com.catalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id) {
         Optional<Category> obj = repository.findById(id);
-        Category category = obj.orElseThrow(() -> new EntityNotFoundException("Category não existe"));
+        Category category = obj.orElseThrow(() -> new ResourceNotFoundException("Category não existe"));
         return new CategoryDTO(category);
     }
 
@@ -46,5 +47,17 @@ public class CategoryService {
         category.setName(dto.getName());
 
         return category;
+    }
+
+    @Transactional
+    public CategoryDTO update(Long id, CategoryDTO dto) {
+        try {
+            Category category = repository.getOne(id);
+            category.setName(dto.getName());
+            category = repository.save(category);
+            return new CategoryDTO(category);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Category com id " + id + " não existe");
+        }
     }
 }
