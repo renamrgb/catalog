@@ -3,6 +3,10 @@ package catalog.renamrgb.github.com.catalog.dto;
 import catalog.renamrgb.github.com.catalog.entities.Category;
 import catalog.renamrgb.github.com.catalog.entities.Product;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -12,10 +16,15 @@ import java.util.Set;
 public class ProductDTO implements Serializable {
 
     private Long id;
+    @Size(min = 3, max = 100)
+    @NotBlank
     private String name;
+    @NotBlank
     private String description;
+    @Positive
     private Double price;
     private String imgUrl;
+    @PastOrPresent
     private Instant date;
 
     private List<CategoryDTO> categories = new ArrayList<>();
