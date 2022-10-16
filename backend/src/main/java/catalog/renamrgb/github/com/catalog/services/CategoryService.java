@@ -3,8 +3,11 @@ package catalog.renamrgb.github.com.catalog.services;
 import catalog.renamrgb.github.com.catalog.dto.CategoryDTO;
 import catalog.renamrgb.github.com.catalog.entities.Category;
 import catalog.renamrgb.github.com.catalog.repositories.CategoryRepository;
+import catalog.renamrgb.github.com.catalog.services.exceptions.DatabaseException;
 import catalog.renamrgb.github.com.catalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +34,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id) {
         Optional<Category> obj = repository.findById(id);
-        Category category = obj.orElseThrow(() -> new ResourceNotFoundException("Category não existe"));
+        Category category = obj.orElseThrow(() -> new ResourceNotFoundException("Category com id " + id + " não existe"));
         return new CategoryDTO(category);
     }
 
@@ -58,6 +61,16 @@ public class CategoryService {
             return new CategoryDTO(category);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Category com id " + id + " não existe");
+        }
+    }
+
+    public void delete(Long id) {
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException("Category com id " + id + " não existe");
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Integridade do banco de dados violada");
         }
     }
 }
