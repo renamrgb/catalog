@@ -1,5 +1,8 @@
 package catalog.renamrgb.github.com.catalog.dto;
 
+import catalog.renamrgb.github.com.catalog.services.validation.UserInsertValid;
+
+@UserInsertValid
 public class UserInsertDTO extends UserDTO {
     private String password;
 
