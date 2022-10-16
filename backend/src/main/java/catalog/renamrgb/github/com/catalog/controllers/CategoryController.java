@@ -4,6 +4,8 @@ import catalog.renamrgb.github.com.catalog.dto.CategoryDTO;
 import catalog.renamrgb.github.com.catalog.services.CategoryService;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +26,8 @@ public class CategoryController {
     private CategoryService service;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<CategoryDTO>> findAll() {
-        List<CategoryDTO> responselist = service.findAll();
+    public ResponseEntity<Page<CategoryDTO>> findAll(Pageable pageable) {
+        Page<CategoryDTO> responselist = service.findAll(pageable);
         return ResponseEntity.ok(responselist);
     }
 

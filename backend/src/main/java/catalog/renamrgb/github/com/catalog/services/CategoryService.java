@@ -8,6 +8,8 @@ import catalog.renamrgb.github.com.catalog.services.exceptions.ResourceNotFoundE
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +25,10 @@ public class CategoryService {
     private CategoryRepository repository;
 
     @Transactional(readOnly = true)
-    public List<CategoryDTO> findAll() {
-        List<Category> listEntity = repository.findAll();
+    public Page<CategoryDTO> findAll(Pageable pageable) {
+        Page<Category> listEntity = repository.findAll(pageable);
         return listEntity
-                .stream()
-                .map(CategoryDTO::new)
-                .collect(Collectors.toList());
+                .map(CategoryDTO::new);
     }
 
     @Transactional(readOnly = true)
