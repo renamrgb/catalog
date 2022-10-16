@@ -12,7 +12,6 @@ import java.time.Instant;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<StandarError> entityNotFound(EntityNotFoundException e,
                                                        HttpServletRequest request) {
